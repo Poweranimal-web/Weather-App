@@ -97,7 +97,13 @@ body {
     margin-top: 47px;
     font-size: 40px;
   }
+.mean-container {
+    display: flex; /* Горизонтальне розташування елементів */
+    gap: 20px; /* Проміжок між блоками */
+    align-items: center; /* Вертикальне вирівнювання по центру */
+}
 .mean {
+    padding-right: 95px;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     font-size: 24px;
   }
@@ -243,6 +249,7 @@ input#citySearch {
   border-radius: 10px;
   border: none;
   margin-top: 20px;
+  margin-bottom: 10px;
 }
 
 button#searchCityBtn {
@@ -258,12 +265,20 @@ button#searchCityBtn {
 button#searchCityBtn:hover {
   background-color: #0C2A42;
 }
+.resultsContainer{
+    display: none;
+    flex-direction: column;
+    overflow-y: scroll;
+    width: 400px;
+    height: 400px;
+    margin: auto;
+}
 </style>
 <script setup>
 import { ref, computed } from 'vue'
 import weatherName from './assets/descriptions.json'
 const modal = ref(null)
-const citiesPerSlide = 3
+const citiesPerSlide = 4
 const currentSlide = ref(0)
 const listPosition = ref([])
 const hourlyWeather = ref([])
@@ -271,8 +286,11 @@ const dailyWeather = ref([])
 const dataLocation = ref(null)
 const dataWeather = ref(null)
 const citySearchText = ref('')
-let id = 0
-const cityList = ref([])
+const matchedResult = ref([])
+const resultsContainer = ref(null)
+let id = ref(getCookie('id') !== null ? JSON.parse(getCookie('id')) : 0)
+const cityList = ref(getCookie('cities') !== null ? filterSavedCities(JSON.parse(getCookie('cities'))) : [])
+const currentCityDetail = ref({ country: '', state: '' })
 const appid = ref('5ecae512c05deedbe3b442ff6e4fb519')
 const cityChunks = computed(() => {
   const chunks = []
@@ -288,7 +306,15 @@ const nextSlide = () => {
     currentSlide.value++
   }
 }
-
+function filterSavedCities (elements) {
+  let array = elements
+  for (let index = 0; index < array.length; index++) {
+    if (array[index].active === true) {
+      array[index].active = false
+    }
+  }
+  return array
+}
 const prevSlide = () => {
   if (currentSlide.value > 0) {
     currentSlide.value--
@@ -306,6 +332,8 @@ function coverterToKm (visibility) {
 function changeCity (city) {
   listPosition.value[0] = city.lat
   listPosition.value[1] = city.lon
+  currentCityDetail.value.country = convertFullName(city.country)
+  currentCityDetail.value.state = city.state
   clearWeatherData()
   getTempeturebyCity()
   findElementCity(city.id)
@@ -319,34 +347,59 @@ function findElementCity (id) {
     }
   }
 }
-async function searchCity () {
-  const url = `http://api.openweathermap.org/geo/1.0/direct?q=${citySearchText.value}&limit=1&appid=${appid.value}`
-  let response = await fetch(url)
-  response = await response.json()
-  if (response.length > 0) {
-    let cityData = { id: id++, name: citySearchText.value, lat: response[0].lat, lon: response[0].lon, active: false }
-    cityList.value.push(cityData)
-    const seenNames = new Set()
-    cityList.value = cityList.value.filter(city => {
-      if (seenNames.has(city.name)) {
-        return false // Duplicate found, exclude it
-      } else {
-        seenNames.add(city.name) // Add new unique name to the Set
-        return true // Keep this item
-      }
-    })
-    console.log(cityList.value)
-    closeModal()
-    citySearchText.value = ''
-    nextSlide()
+async function searchCity (event) {
+  if (event.target.value.length > 0) {
+    matchedResult.value = []
+    const url = `http://api.openweathermap.org/geo/1.0/direct?q=${event.target.value}&limit=10&appid=${appid.value}`
+    resultsContainer.value.style.display = 'flex'
+    citySearchText.value = event.target.value
+    let response = await fetch(url)
+    response = await response.json()
+    if (response.length > 0) {
+      response.map((city, index) => {
+        city.id = index
+        matchedResult.value.push(city)
+        return city
+      })
+    } else {
+      console.log("It doesn't exist, input valid data")
+    }
   } else {
-    alert("It doesn't exist, input valid data")
+    matchedResult.value = []
+    resultsContainer.value.style.display = 'none'
+    citySearchText.value = event.target.value
   }
+}
+function addCity (city) {
+  let cityData = { id: id.value++, name: city.name, country: city.country, state: city.state, lat: city.lat, lon: city.lon, active: false }
+  setCookie('id', id.value)
+  cityList.value.push(cityData)
+  const seenNames = new Set()
+  cityList.value = cityList.value.filter(city => {
+    if (seenNames.has(city.name) && seenNames.has(city.country) && seenNames.has(city.state)) {
+      return false // Duplicate found, exclude it
+    } else {
+      seenNames.add(city.name) // Add new unique name to the Set
+      seenNames.add(city.country)
+      seenNames.add(city.state)
+      return true // Keep this item
+    }
+  })
+  setCookie('cities', JSON.stringify(cityList.value))
+  matchedResult.value = []
+  resultsContainer.value.style.display = 'none'
+  citySearchText.value = ''
+  closeModal()
+  citySearchText.value = ''
+  nextSlide()
 }
 async function getTempeture () {
   await getLocation()
-  let cityData = { id: id++, name: dataLocation.value.address.city, lat: listPosition.value[0], lon: listPosition.value[1], active: true }
+  let cityData = { id: id.value++, name: dataLocation.value.address.city, country: dataLocation.value.address.country, state: dataLocation.value.address.state, lat: listPosition.value[0], lon: listPosition.value[1], active: true }
+  currentCityDetail.value.country = dataLocation.value.address.country
+  currentCityDetail.value.state = dataLocation.value.address.state
   cityList.value.push(cityData)
+  console.log(cityList)
   callWeatherAPIByLocation()
   callWeatherAPIByHour()
   callWeatherAPIByDay()
@@ -410,11 +463,11 @@ async function callWeatherAPIByLocation () {
   dataWeather.value.description = response.weather[0].main
 }
 async function callWeatherAPIByHour () {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${listPosition.value[0]}&longitude=${listPosition.value[1]}&hourly=temperature_2m&timezone=auto&forecast_days=1&forecast_hours=6`
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${listPosition.value[0]}&longitude=${listPosition.value[1]}&hourly=temperature_2m,weather_code&timezone=auto&forecast_days=1&forecast_hours=6`
   let response = await fetch(url)
   response = await response.json()
   for (let i = 0; i < 6; i++) {
-    let weatherHourData = { id: i, weather: response.hourly.temperature_2m[i], time: response.hourly.time[i] }
+    let weatherHourData = { id: i, weather: response.hourly.temperature_2m[i], time: response.hourly.time[i], weather_code: response.hourly.weather_code[i] }
     hourlyWeather.value.push(weatherHourData)
   }
 }
@@ -451,7 +504,27 @@ window.onclick = function (event) {
     modal.value.style.display = 'none'
   }
 }
-
+function convertFullName (code) {
+  if (code.length === 2) {
+    let regionNames = new Intl.DisplayNames(['en'], { type: 'region' })
+    return regionNames.of(code)
+  } else {
+    return code
+  }
+}
+function deleteCity () {
+  cityList.value = cityList.value.filter((city) => city.active !== true)
+  cityList.value[0].active = true
+  changeCity(cityList.value[0])
+  setCookie('cities', JSON.stringify(cityList.value))
+}
+function setCookie (id, value) {
+  document.cookie = id + '=' + value
+}
+function getCookie (id) {
+  let value = document.cookie.match('(^|;)?' + id + '=([^;]*)(;|$)')
+  return value ? unescape(value[2]) : null
+}
 </script>
 <template>
   <!DOCTYPE html>
@@ -465,6 +538,7 @@ window.onclick = function (event) {
 <body>
   <div class="topmenu">
     <i class='bx bx-chevron-left-circle' id="scrollLeft"  @click="prevSlide"></i>
+    <i class='bx bx-minus' @click="deleteCity"></i>
     <div class="sities-container">
         <div class="sities" id="citiesList" v-for="(chunk, index) in cityChunks" :key="index" v-show="index === currentSlide">
             <div :class="{ active: city.active }" v-for="city in chunk" :key="city.id" @click="changeCity(city)">{{city.name}}</div>
@@ -478,20 +552,27 @@ window.onclick = function (event) {
       <div class="modal-content" >
           <span class="close" @click="closeModal">&times;</span>
           <h2>Search for City</h2>
-          <input type="text" id="citySearch" placeholder="Enter city name..." v-model="citySearchText"/>
-          <button id="searchCityBtn" @click="searchCity">Search</button>
+          <input type="text" id="citySearch" placeholder="Enter city name..." :value="citySearchText" @input="searchCity"/>
+          <div class="resultsContainer" ref="resultsContainer">
+            <button v-for="result in matchedResult" :key="result.id" @click="addCity(result)" >{{ result.name }},{{ convertFullName(result.country) }}, {{ result.state }}</button>
+          </div>
+          <!-- <button id="searchCityBtn" @click="searchCity">Search</button> -->
       </div>
     </div>
 
       <div class="maininf">
         <div class="mtemperature">{{Math.round(Number(dataWeather.temp))}}°C <p class="condition">{{ dataWeather.description }}</p></div>
-        <div class="mean">{{Math.round(Number(dataWeather.temp_min))}} / {{Math.round(Number(dataWeather.temp_max))}}</div>
+      <div class="mean-container">
+        <div class="mean">AV {{Math.round(Number(dataWeather.temp_min))}}°C / {{Math.round(Number(dataWeather.temp_max))}}°C</div>
+        <div class="mean">{{ currentCityDetail.country  }}, {{ currentCityDetail.state  }}</div>
+      </div>
       </div>
     <div class="container">
         <div class="forecast">
           <div v-for="weather in hourlyWeather" v-bind:key="weather.id" class="forecast-item">
             <div>{{ filterTime(weather.id,weather.time) }}</div>
-            <div>{{ new Date(weather.time).getHours() === new Date().getHours()? Math.round(Number(dataWeather.temp)) : Math.round(Number(weather.weather))  }}</div>
+            <div><img v-bind:src="downloadLink(weather.weather_code)"/></div>
+            <div>{{ new Date(weather.time).getHours() === new Date().getHours()? Math.round(Number(dataWeather.temp)) : Math.round(Number(weather.weather))  }}°C</div>
           </div>
           <!-- <div class="forecast-item">
             <div>16:00</div>
@@ -520,7 +601,7 @@ window.onclick = function (event) {
             <span class="day-name">{{filterDate(new Date(weather.date))}}</span>
             <div class="weather-info">
                 <img v-bind:src="downloadLink(weather.weather_code)"/>
-                <span class="temperature">{{Math.round(Number(weather.weather_min))}}/{{Math.round(Number(weather.weather_max))}}</span>
+                <span class="temperature">{{Math.round(Number(weather.weather_min))}}°C/{{Math.round(Number(weather.weather_max))}}°C</span>
             </div>
         </div>
         <!-- <div class="forecast-day">
