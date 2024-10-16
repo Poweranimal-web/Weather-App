@@ -398,7 +398,7 @@ async function getTempeture () {
   let cityData = { id: id.value++, name: dataLocation.value.address.city, country: dataLocation.value.address.country, state: dataLocation.value.address.state, lat: listPosition.value[0], lon: listPosition.value[1], active: true }
   currentCityDetail.value.country = dataLocation.value.address.country
   currentCityDetail.value.state = dataLocation.value.address.state
-  cityList.value.push(cityData)
+  cityList.value[0] = cityData
   console.log(cityList)
   callWeatherAPIByLocation()
   callWeatherAPIByHour()
@@ -451,10 +451,14 @@ function getWindDirection (d) {
 async function callWeatherAPIByLocation () {
   const url = `https://api.openweathermap.org/data/2.5/weather?lat=${listPosition.value[0]}&lon=${listPosition.value[1]}&units=metric&appid=${appid.value}`
   const url2 = `https://api.open-meteo.com/v1/forecast?latitude=${listPosition.value[0]}&longitude=${listPosition.value[1]}&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1&forecast_hours=6`
+  const url3 = `https://api.open-meteo.com/v1/forecast?latitude=${listPosition.value[0]}&longitude=${listPosition.value[1]}&current=temperature_2m&forecast_days=1&forecast_hours=6`
   let response = await fetch(url)
   response = await response.json()
   let responseMaxMin = await fetch(url2)
   responseMaxMin = await responseMaxMin.json()
+  let responseCurrentTemp = await fetch(url3)
+  responseCurrentTemp = await responseCurrentTemp.json()
+  response.main.temp = responseCurrentTemp.current.temperature_2m
   dataWeather.value = response.main
   dataWeather.value.temp_max = responseMaxMin.daily.temperature_2m_max[0]
   dataWeather.value.temp_min = responseMaxMin.daily.temperature_2m_min[0]
