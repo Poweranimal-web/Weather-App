@@ -9,6 +9,8 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
 const { configure } = require('quasar/wrappers')
+const fs = require('fs')
+const path = require('path')
 
 module.exports = configure(function (/* ctx */) {
   return {
@@ -78,8 +80,18 @@ module.exports = configure(function (/* ctx */) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
-      // https: true
-      open: true // opens browser window automatically
+      // https: true,
+      // https: {
+      //   key: 'D:/Weather/weather-app/localhost.key',
+      //   cert: 'D:/Weather/weather-app/localhost.crt'
+      // },
+      https: {
+        key: fs.readFileSync(path.resolve(__dirname, 'D:/Weather/weather-app/192.168.50.227.key')),
+        cert: fs.readFileSync(path.resolve(__dirname, 'D:/Weather/weather-app/192.168.50.227.crt'))
+      },
+      port: 3000,
+      host: '192.168.50.227',
+      open: false // opens browser window automatically
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework

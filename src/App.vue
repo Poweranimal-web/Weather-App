@@ -1,4 +1,293 @@
 <style>
+
+/*
+it's commited code for mobile anddroid app
+*{
+    margin: 0;
+    padding: 0;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #2E6582;
+    color: white;
+}
+
+.topmenu {
+  display: flex;
+  align-items: flex-end;
+  background-color: #132C46;
+  padding: 10px;
+  position: relative;
+  white-space: nowrap; // Забезпечує горизонтальне розташування
+}
+
+.sities-container {
+  flex: 1;
+  overflow-x: hidden; // Вимикає горизонтальний скрол для користувачів
+  white-space: nowrap; // Всі міста в одну лінію
+  display: flex;
+  align-items: center;
+}
+
+.sities {
+    display: flex;
+    justify-content: center;
+    gap: 0px; // Відстань між містами
+    flex-grow: 1; // Дозволяє містам займати ширину між іконками
+    text-align: center;
+    pointer-events: none;
+}
+
+.sities div {
+    font-size: 12px;
+    cursor: pointer;
+    padding: 5px 10px; // Додаємо відступи для кожного міста
+    margin: 1px 10px 1px 10px;
+    border-radius: 10px; // Округлені краї
+}
+
+.sities div.active {
+    background-color: #607ec7; // Колір фону для вибраного міста
+    color: black; // Чорний текст для активного міста
+    box-shadow: 0px 2px 8px 2px;
+}
+
+.sities .active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.bx {
+  font-size: 30px;
+  cursor: pointer;
+}
+
+#scrollLeft, #scrollRight {
+  color: white;
+}
+
+.topmenu i {
+    font-size: 25px; // Розмір іконок
+    cursor: pointer;
+    background-color: #132C46; // Фон під іконками
+    padding: 0 2px 0 2px;
+}
+
+.maininf {
+  padding: 10px 0 0 20px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 20vh;
+    margin-top: 30px;
+  }
+
+  .mtemperature {
+    font-size: 50px;
+    display: flex;
+  }
+
+  .condition {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    margin-left: 30px;
+    margin-top: 25px;
+    font-size: 20px;
+  }
+
+  .mean-container {
+    gap: 10px; // Проміжок між блоками
+    align-items: center; // Вертикальне вирівнювання по центру
+}
+
+  .mean {
+    padding-right: 9px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 14px;
+  }
+
+  .forecast {
+    background-color: #132C46;
+    border-radius: 20px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+    width: 85%; // Задаємо ширину блоку на всю ширину viewport
+    margin: 0; // Прибираємо будь-які відступи
+  }
+
+  .img-container{
+    max-width: 100%; // Изображение не будет шире своего контейнера
+    height: auto; // Сохраняет пропорции изображения
+  }
+
+  .forecast-item {
+    width: 70px;
+    font-size: 10px;
+    text-align: center;
+  }
+
+  .forecast-block {
+
+    background-color: #132C46;
+    border-radius: 20px;
+    padding: 20px;
+    width: 90%; // Ширина блоку
+    margin: 30px auto; // Центрування на сторінці
+}
+
+.forecast-day {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2); // Лінія між днями
+}
+
+.day-name {
+  margin-right: 10px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.weather-info {
+    display: flex;
+    align-items: center;
+}
+
+.weather-info .bx {
+    font-size: 30px;
+    margin-right: 30px; // Відступ між іконкою і температурою
+}
+
+.temperature {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.info-blocks {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 50px 0 20px 0;
+    width: 90%;
+    margin: 0 auto; // Центрування на сторінці
+}
+
+.info-card {
+  background-color: #0C2A42;
+  border-radius: 15px; // Менший радіус для більшої компактності
+  width: 47%; // Заповнює всю ширину для мобільного виду
+  height: 120px; // Зменшена висота
+  position: relative;
+  padding: 10px 15px; // Зменшені відступи
+  margin-bottom: 10px; // Відстань між картками
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.info-title {
+  font-size: 24px; // Зменшено для більш компактного вигляду
+  font-weight: normal;
+  color: #B0C4DE; // Відтінок для кращого контрасту
+}
+
+.info-value {
+  font-size: 25px;
+  font-weight: bold;
+  color: white; // Яскравий білий для показника
+  margin: 0;
+}
+
+.info-value-veter{
+  font-size: 25px;
+  font-weight: bold;
+  color: white; // Яскравий білий для показника
+  margin: 0;
+  align-items: flex-end;
+}
+
+.info-card i {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 37px;
+  color: #B0C4DE; // Світлий колір для іконки
+}
+
+.info-description {
+  font-size: 11.5px;
+  color: #B0C4DE; // Світлий відтінок для допоміжного тексту
+  margin-top: 0;
+}
+
+// Стилі для модального вікна
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: #132C46;
+  margin: 15% auto;
+  padding: 20px;
+  border-radius: 20px;
+  width: 80%;
+  height: 55%;
+  max-width: 500px;
+  color: white;
+  text-align: center;
+}
+
+.close {
+  color: white;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+input#citySearch {
+  width: 80%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  margin-top: 20px;
+}
+
+button#searchCityBtn {
+  padding: 10px 20px;
+  background-color: #1D3547;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button#searchCityBtn:hover {
+  background-color: #0C2A42;
+}*/
 * {
     margin: 0;
     margin-top: 10px;
@@ -114,7 +403,8 @@ body {
     display: flex;
     justify-content: space-around;
     width: 85%; /* Задаємо ширину блоку на всю ширину viewport */
-    margin: 0; /* Прибираємо будь-які відступи */
+    margin-top: 30px;
+    margin-bottom: 30px;
   }
 .forecast-item {
     font-size: 24px;
@@ -125,7 +415,7 @@ body {
     border-radius: 20px;
     padding: 20px;
     width: 90%; /* Ширина блоку */
-    margin: 0 auto; /* Центрування на сторінці */
+    margin: 40px auto; /* Центрування на сторінці */
 }
 
 .forecast-day {
@@ -292,6 +582,12 @@ let id = ref(getCookie('id') !== null ? JSON.parse(getCookie('id')) : 0)
 const cityList = ref(getCookie('cities') !== null ? filterSavedCities(JSON.parse(getCookie('cities'))) : [])
 const currentCityDetail = ref({ country: '', state: '' })
 const appid = ref('5ecae512c05deedbe3b442ff6e4fb519')
+console.log('dskdskdksdkskdskdj')
+if (!navigator.geolocation) {
+  console.error('Geolocation is not available.')
+} else {
+  console.log('Geolocation is available.')
+}
 const cityChunks = computed(() => {
   const chunks = []
   for (let i = 0; i < cityList.value.length; i += citiesPerSlide) {
@@ -350,7 +646,7 @@ function findElementCity (id) {
 async function searchCity (event) {
   if (event.target.value.length > 0) {
     matchedResult.value = []
-    const url = `http://api.openweathermap.org/geo/1.0/direct?q=${event.target.value}&limit=10&appid=${appid.value}`
+    const url = `https://api.openweathermap.org/geo/1.0/direct?q=${event.target.value}&limit=10&appid=${appid.value}`
     resultsContainer.value.style.display = 'flex'
     citySearchText.value = event.target.value
     let response = await fetch(url)
@@ -484,16 +780,14 @@ async function callWeatherAPIByDay () {
     dailyWeather.value.push(weatherDayData)
   }
 }
-function getPosition () { // потрібно повернути значення довготи та широти з функції getCurrentPosition,для цього обернув її в Promise
-  return new Promise(function (resolve, reject) {
-    navigator.geolocation.getCurrentPosition(resolve, reject)
-  })
-}
+// function getPosition () { // потрібно повернути значення довготи та широти з функції getCurrentPosition,для цього обернув її в Promise
+//   return new Promise(function (resolve, reject) {
+//     navigator.geolocation.getCurrentPosition(resolve, reject)
+//   })
+// }
 async function getLocation () { // отримання даних містознаходження
-  await getPosition().then((position) => {
-    listPosition.value.push(position.coords.latitude)
-    listPosition.value.push(position.coords.longitude)
-  })
+  listPosition.value.push('48.4525768')
+  listPosition.value.push('35.0710132')
   const url = `https://nominatim.openstreetmap.org/reverse.php?lat=${listPosition.value[0]}&lon=${listPosition.value[1]}&zoom=18&format=jsonv2`
   const response = await fetch(url)
   dataLocation.value = await response.json()
@@ -575,7 +869,7 @@ function getCookie (id) {
         <div class="forecast">
           <div v-for="weather in hourlyWeather" v-bind:key="weather.id" class="forecast-item">
             <div>{{ filterTime(weather.id,weather.time) }}</div>
-            <div><img v-bind:src="downloadLink(weather.weather_code)"/></div>
+            <div><img class="img-container" v-bind:src="downloadLink(weather.weather_code)"/></div>
             <div>{{ new Date(weather.time).getHours() === new Date().getHours()? Math.round(Number(dataWeather.temp)) : Math.round(Number(weather.weather))  }}°C</div>
           </div>
           <!-- <div class="forecast-item">

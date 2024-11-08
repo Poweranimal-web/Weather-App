@@ -1,0 +1,14 @@
+{
+  "name": "create-quasar",
+  "version": "0.0.1",
+  "description": "Collaborative educational project for universityndefined",
+  "author": "Poweranimal-web <nikita.guseff@gmail.com>",
+  "private": true,
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@jcesarmobile/ssl-skip": "^0.4.0"
+  }
+}
